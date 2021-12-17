@@ -37,7 +37,7 @@ def generate_random_playlist(sp, name, songs, count=50):
   current_user = sp.current_user()['id']
 
   # pick 50 random songs
-  playlist = random.choices(songs, k=count)
+  playlist = random.sample(songs, count)
 
   playlist_id = sp.user_playlist_create(user=current_user, name=name, public=False)['id']
 
@@ -82,14 +82,16 @@ def songs_from_artist(sp, id):
   return tracks
 
 def playlist_from_artists(sp, artists, count):
-  print("Generating...")
   songs = {}
 
   for artist in artists:
+    print(f"Obtaining songs from artist: {artist}...")
     song_list = songs_from_artist(sp, artist)
 
     for s in song_list:
       songs[s] = song_list[s]
+
+  print("Generating playlist...")
 
   song_list = [track['id'] for track in songs.values()]
 
@@ -101,7 +103,7 @@ def top_artists(sp, count):
   return sp.current_user_top_artists(limit=count)['items']
 
 def playlist_from_top_artists(sp):
-  playlist_from_artists(sp, [artist['id'] for artist in top_artists(sp, 30)], 30)
+  playlist_from_artists(sp, [artist['id'] for artist in top_artists(sp, 2)], 30)
 
 
 main()
